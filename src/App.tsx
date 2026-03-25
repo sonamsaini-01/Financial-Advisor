@@ -4,6 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { UserDataProvider } from "@/context/UserDataContext";
+import VoiceGuide from "@/components/VoiceGuide";
+import BiometricLogin from "@/components/auth/BiometricLogin";
+import { useState } from "react";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import FirePlanner from "./pages/FirePlanner";
@@ -18,14 +21,18 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <UserDataProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <UserDataProvider>
+          {!isAuthenticated && <BiometricLogin onAuthenticate={() => setIsAuthenticated(true)} />}
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/fire" element={<FirePlanner />} />
@@ -38,10 +45,12 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <VoiceGuide />
         </BrowserRouter>
       </UserDataProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
+};
 
 export default App;
